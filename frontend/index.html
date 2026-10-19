@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KITTY PET · 像素对话机</title>
+  <meta name="description" content="像素风 Hello Kitty 电子宠物机 AI 对话机器人" />
+
+  <!-- 字体：Latin 用像素体，中文回退到系统字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <!-- ===== 像素天空背景 ===== -->
+  <div class="sky" aria-hidden="true">
+    <div class="sky__grid"></div>
+    <div class="cloud cloud--1"></div>
+    <div class="cloud cloud--2"></div>
+    <div class="cloud cloud--3"></div>
+    <div class="star star--1">✦</div>
+    <div class="star star--2">★</div>
+    <div class="star star--3">✧</div>
+    <div class="star star--4">♥</div>
+    <div class="star star--5">✦</div>
+  </div>
+
+  <div class="stage">
+    <!-- ===== 左侧：像素存档卡带 ===== -->
+    <aside class="cartridge">
+      <div class="cartridge__tab"></div>
+      <div class="cartridge__body">
+        <h2 class="cartridge__title">
+          <span class="cartridge__led"></span>
+          SAVE DATA
+        </h2>
+        <p class="cartridge__sub">会话存档</p>
+
+        <button class="btn btn--new" id="btnNew" type="button">
+          <span class="btn__icon">＋</span> NEW GAME
+        </button>
+
+        <ul class="session-list" id="sessionList" aria-label="历史会话"></ul>
+
+        <div class="cartridge__footer">
+          <button class="btn btn--ghost" id="btnClearAll" type="button">清空存档</button>
+          <button class="btn btn--ghost" id="btnTheme" type="button" title="切换主题">◐ 主题</button>
+        </div>
+        <button class="btn btn--ghost btn--full" id="btnChangePet" type="button" style="margin-top: 8px">
+          ♻ 更换宠物
+        </button>
+      </div>
+    </aside>
+
+    <!-- ===== 主角：Hello Kitty 电子宠物机 ===== -->
+    <main class="pet" id="pet">
+      <!-- 耳朵 -->
+      <div class="pet__ear pet__ear--left"></div>
+      <div class="pet__ear pet__ear--right"></div>
+
+      <!-- 蝴蝶结（必须放在耳朵外面，否则会被 clip-path 裁掉） -->
+      <div class="bow" aria-hidden="true">
+        <span class="bow__knot"></span>
+        <span class="bow__wing bow__wing--l"></span>
+        <span class="bow__wing bow__wing--r"></span>
+      </div>
+
+      <!-- 机身 -->
+      <div class="pet__body">
+        <!-- 脸部装饰（眼、鼻、胡须） -->
+        <div class="face" aria-hidden="true">
+          <div class="face__eye face__eye--left"></div>
+          <div class="face__eye face__eye--right"></div>
+          <div class="face__nose"></div>
+          <div class="face__whiskers face__whiskers--left">
+            <i></i><i></i><i></i>
+          </div>
+          <div class="face__whiskers face__whiskers--right">
+            <i></i><i></i><i></i>
+          </div>
+        </div>
+
+        <!-- 顶部铭牌 -->
+        <header class="pet__brand">
+          <h1 class="pet__title">KITTY PET</h1>
+          <p class="pet__sub" id="petNameplate">TALKING MACHINE</p>
+        </header>
+
+        <!-- ===== 屏幕 ===== -->
+        <section class="screen">
+          <div class="screen__bezel">
+            <!-- 状态栏 -->
+            <div class="screen__status">
+              <span class="stat"><i class="stat__heart">♥</i><b id="statMood">100</b></span>
+              <span class="stat">LV.<b id="statLevel">1</b></span>
+              <span class="stat stat--model" id="statModel">mimo-v2.6-pro</span>
+              <span class="stat stat--conn" id="statConn">
+                <i class="conn-dot"></i> ONLINE
+              </span>
+            </div>
+
+            <!-- 消息区 -->
+            <div class="screen__view" id="view">
+              <!-- ===== 初始化步骤 1：选性格 ===== -->
+              <div class="setup" id="setupPersonality">
+                <div class="setup__head">
+                  <h3>CHOOSE CHARACTER</h3>
+                  <p>选择宠物的性格</p>
+                </div>
+                <div class="char-grid" id="charGrid">
+                  <!-- 由 app.js 根据 /api/personalities 渲染 -->
+                </div>
+              </div>
+
+              <!-- ===== 初始化步骤 2：起名字 ===== -->
+              <div class="setup" id="setupName" hidden>
+                <div class="setup__head">
+                  <h3>NAME YOUR PET</h3>
+                  <p>给它起个好听的名字吧</p>
+                </div>
+                <div class="picked-badge" id="pickedBadge"></div>
+                <label class="name-label" for="petNameInput">PET NAME</label>
+                <input
+                  class="name-input"
+                  id="petNameInput"
+                  type="text"
+                  maxlength="12"
+                  placeholder="例如：小棉花"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <div class="setup__actions">
+                  <button class="btn btn--ghost btn--sm" id="btnBackStep" type="button">← 返回</button>
+                  <button class="btn btn--start" id="btnStartChat" type="button">START ▶</button>
+                </div>
+              </div>
+
+              <!-- ===== 欢迎屏（初始化完成后） ===== -->
+              <div class="welcome" id="welcome" hidden>
+                <div class="welcome__kitty">
+                  <span class="welcome__bow">🎀</span>
+                  <span class="welcome__face">≧◉ᴥ◉≦</span>
+                </div>
+                <h3 id="welcomeTitle">READY!</h3>
+                <p id="welcomeText">按下 <b>START</b> 开始聊天吧～</p>
+                <div class="welcome__tips">
+                  <button class="chip" data-prompt="你好呀，介绍一下你自己吧！">👋 打个招呼</button>
+                  <button class="chip" data-prompt="给我讲一个可爱的睡前小故事吧。">🌙 睡前故事</button>
+                  <button class="chip" data-prompt="用简单的语言解释什么是人工智能。">💡 科普一下</button>
+                  <button class="chip" data-prompt="推荐几部适合周末看的电影吧。">🎬 推荐电影</button>
+                </div>
+              </div>
+
+              <!-- 消息列表 -->
+              <div class="messages" id="messages" hidden></div>
+
+              <!-- 打字指示器 -->
+              <div class="typing" id="typing" hidden>
+                <div class="typing__bubble">
+                  <span class="typing__avatar">K</span>
+                  <span class="typing__dots"><i></i><i></i><i></i></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 输入区 -->
+            <div class="screen__input">
+              <span class="prompt-caret">&gt;</span>
+              <textarea
+                id="input"
+                rows="1"
+                placeholder="输入点什么…"
+                maxlength="8000"
+                spellcheck="false"
+              ></textarea>
+              <button class="btn-send" id="btnSend" type="button" title="发送 (Enter)">
+                ▶
+              </button>
+            </div>
+
+            <div class="screen__scanlines" aria-hidden="true"></div>
+          </div>
+        </section>
+
+        <!-- 硬件按键 -->
+        <div class="pet__keys">
+          <button class="key key--a" id="keySend" type="button">
+            <span class="key__cap">A</span>
+            <span class="key__label">SEND</span>
+          </button>
+          <button class="key key--b" id="keyNew" type="button">
+            <span class="key__cap">B</span>
+            <span class="key__label">NEW</span>
+          </button>
+          <button class="key key--c" id="keyStop" type="button">
+            <span class="key__cap">C</span>
+            <span class="key__label">STOP</span>
+          </button>
+        </div>
+
+        <!-- 底部扬声器孔 -->
+        <div class="pet__speaker" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+
+      <!-- 挂链孔 -->
+      <div class="pet__chain" aria-hidden="true"></div>
+    </main>
+
+    <!-- ===== 右侧：状态面板 ===== -->
+    <aside class="manual">
+      <div class="manual__card">
+        <h2 class="manual__title">HOW TO PLAY</h2>
+        <ul class="manual__list">
+          <li><b>A / ENTER</b> 发送消息</li>
+          <li><b>B</b> 开新对话</li>
+          <li><b>C</b> 中断当前回复</li>
+          <li><b>SHIFT+ENTER</b> 换行</li>
+        </ul>
+      </div>
+      <div class="manual__card">
+        <h2 class="manual__title">SYSTEM LOG</h2>
+        <pre class="log" id="log">[boot] kitty pet v1.0
+[boot] waiting for input…</pre>
+      </div>
+    </aside>
+  </div>
+
+  <!-- 依赖库 -->
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.9/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.4/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.3/dist/purify.min.js"></script>
+
+  <!-- 业务脚本 -->
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+.DS_Store
+Thumbs.db
+*.log
+
+# 本机辅助脚本
+github-login.bat
+
+# 测试产物
+.shots/
+.chrome-e2e/
+
+# 后端
+# 注意：uv.lock 要提交（保证可复现安装），只有 .env 是密钥不能提交
+backend/.env
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+
+# 依赖缓存
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/

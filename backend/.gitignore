@@ -1,0 +1,7 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+# uv.lock 要提交，保证依赖可复现（见根目录 .gitignore 说明）
